@@ -1,0 +1,92 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the document
+    function isOwner(ownerId) {
+      return isSignedIn() && ownerId == request.auth.uid;
+    }
+    
+    // Helper function to check if document is owned by authenticated user
+    function documentIsOwner() {
+      return isOwner(resource.data.ownerId);
+    }
+    
+    // Users Collection
+    match /users/{userId} {
+      allow read: if isSignedIn() && userId == request.auth.uid;
+      allow create: if isSignedIn() && userId == request.auth.uid;
+      allow update: if isSignedIn() && userId == request.auth.uid;
+      allow delete: if false; // Soft delete only
+    }
+    
+    // Projects Collection
+    match /projects/{projectId} {
+      allow read: if documentIsOwner();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if documentIsOwner();
+      allow delete: if documentIsOwner();
+    }
+    
+    // Tasks Collection
+    match /tasks/{taskId} {
+      allow read: if documentIsOwner();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if documentIsOwner();
+      allow delete: if documentIsOwner();
+    }
+    
+    // Time Entries Collection
+    match /timeEntries/{entryId} {
+      allow read: if documentIsOwner();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if documentIsOwner();
+      allow delete: if documentIsOwner();
+    }
+    
+    // Pomodoro Sessions Collection
+    match /pomodoroSessions/{sessionId} {
+      allow read: if documentIsOwner();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if documentIsOwner();
+      allow delete: if documentIsOwner();
+    }
+    
+    // Goals Collection
+    match /goals/{goalId} {
+      allow read: if documentIsOwner();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if documentIsOwner();
+      allow delete: if documentIsOwner();
+    }
+    
+    // Daily Reviews Collection
+    match /dailyReviews/{reviewId} {
+      allow read: if documentIsOwner();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if documentIsOwner();
+      allow delete: if documentIsOwner();
+    }
+    
+    // Streaks Collection
+    match /streaks/{userId} {
+      allow read: if isSignedIn() && userId == request.auth.uid;
+      allow create: if isSignedIn() && userId == request.auth.uid;
+      allow update: if isSignedIn() && userId == request.auth.uid;
+      allow delete: if false; // Managed by Cloud Functions
+    }
+    
+    // Notifications Collection
+    match /notifications/{notificationId} {
+      allow read: if documentIsOwner();
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if documentIsOwner() || request.auth.token.admin == true; // Cloud Functions
+      allow delete: if documentIsOwner();
+    }
+  }
+}
