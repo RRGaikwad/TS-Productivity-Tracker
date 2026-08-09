@@ -3,13 +3,13 @@ import { getAuth, Auth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, Firestore, connectFirestoreEmulator } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDemoKeyForLocalTesting12345',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'techsuccession-demo.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'techsuccession-demo',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'techsuccession-demo.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789012',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:123456789012:web:demo123456789',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyB1SToymM0QlYyMQbvsRmZP6lZZy4X1zW8',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'ts-productivity-tracker.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'ts-productivity-tracker',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'ts-productivity-tracker.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '589934080438',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:589934080438:web:7926d8178698b29360d117',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-K1JPY0FSXD',
 };
 
 // Initialize Firebase
