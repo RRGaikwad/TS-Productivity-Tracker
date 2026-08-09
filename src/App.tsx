@@ -23,7 +23,7 @@ type Tab = 'tasks' | 'projects' | 'pomodoro' | 'analytics' | 'goals' | 'settings
 function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('tasks');
-  const { user, loading, guestSignIn } = useAuth();
+  const { user, loading } = useAuth();
   useSync();
 
   if (loading) {
@@ -73,14 +73,8 @@ function AuthPage() {
           {isSignUp ? 'Create your account' : 'Sign in to your account'}
         </p>
 
-        <div className="mb-6 space-y-3">
+        <div className="mb-6">
           <GoogleSignInButton />
-          <button
-            onClick={guestSignIn}
-            className="w-full py-2.5 px-4 bg-indigo-50 border border-indigo-200 text-indigo-700 font-semibold rounded-lg hover:bg-indigo-100 transition-colors text-sm flex items-center justify-center gap-2"
-          >
-            ⚡ Quick Demo Mode (No Login Required)
-          </button>
         </div>
 
         <div className="relative mb-6">

@@ -11,7 +11,6 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, displayName: string) => Promise<void>;
-  guestSignIn: () => void;
   signOut: () => Promise<void>;
 }
 
@@ -27,31 +26,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(firebaseUser);
       
       if (firebaseUser) {
+        // Provide immediate fallback userProfile so UI opens smoothly without waiting for network
+        const defaultProfile: UserType = {
+          id: firebaseUser.uid,
+          email: firebaseUser.email || '',
+          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+          plan: 'free',
+          createdAt: new Date() as any,
+          updatedAt: new Date() as any,
+          settings: {
+            theme: 'light',
+            pomodoro: { workDuration: 25, shortBreakDuration: 5, longBreakDuration: 15, autoStartBreaks: false },
+            reminders: { defaultLeadTime: 15 },
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          },
+        };
+        setUserProfile(defaultProfile);
+        setLoading(false);
+
+        // Fetch actual profile asynchronously in background
         try {
           const profile = await getUserDoc(firebaseUser.uid);
-          setUserProfile(profile as UserType | null);
+          if (profile) {
+            setUserProfile(profile as UserType);
+          }
         } catch (err) {
           console.warn('Could not fetch user profile from Firestore:', err);
-          setUserProfile({
-            id: firebaseUser.uid,
-            email: firebaseUser.email || 'demo@local.com',
-            displayName: firebaseUser.displayName || 'Demo User',
-            plan: 'free',
-            createdAt: new Date() as any,
-            updatedAt: new Date() as any,
-            settings: {
-              theme: 'light',
-              pomodoro: { workDuration: 25, shortBreakDuration: 5, longBreakDuration: 15, autoStartBreaks: false },
-              reminders: { defaultLeadTime: 15 },
-              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            },
-          });
         }
       } else {
         setUserProfile(null);
+        setLoading(false);
       }
-      
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -67,29 +72,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSignUpWithEmail = async (email: string, password: string, displayName: string) => {
     await signUpWithEmail(email, password, displayName);
-  };
-
-  const handleGuestSignIn = () => {
-    const mockUser: any = {
-      uid: 'demo_user_123',
-      email: 'demo@local.com',
-      displayName: 'Demo User',
-    };
-    setUser(mockUser);
-    setUserProfile({
-      id: 'demo_user_123',
-      email: 'demo@local.com',
-      displayName: 'Demo User',
-      plan: 'free',
-      createdAt: new Date() as any,
-      updatedAt: new Date() as any,
-      settings: {
-        theme: 'light',
-        pomodoro: { workDuration: 25, shortBreakDuration: 5, longBreakDuration: 15, autoStartBreaks: false },
-        reminders: { defaultLeadTime: 15 },
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      },
-    });
   };
 
   const handleSignOut = async () => {
@@ -111,7 +93,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signInWithGoogle: handleSignInWithGoogle,
         signInWithEmail: handleSignInWithEmail,
         signUpWithEmail: handleSignUpWithEmail,
-        guestSignIn: handleGuestSignIn,
         signOut: handleSignOut,
       }}
     >
