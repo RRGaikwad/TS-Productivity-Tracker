@@ -1,6 +1,5 @@
 {
   "projects": {
-    "default": "task-productivity-pwa",
-    "production": "task-productivity-pwa-prod"
+    "default": "ts-productivity-tracker"
   }
 }

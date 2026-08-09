@@ -2,15 +2,14 @@ importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
 const firebaseConfig = {
-  apiKey: "PLACEHOLDER_API_KEY",
-  authDomain: "PLACEHOLDER_AUTH_DOMAIN",
-  projectId: "PLACEHOLDER_PROJECT_ID",
-  storageBucket: "PLACEHOLDER_STORAGE_BUCKET",
-  messagingSenderId: "PLACEHOLDER_SENDER_ID",
-  appId: "PLACEHOLDER_APP_ID"
+  apiKey: "AIzaSyB1SToymM0QlYyMQbvsRmZP6lZZy4X1zW8",
+  authDomain: "ts-productivity-tracker.firebaseapp.com",
+  projectId: "ts-productivity-tracker",
+  storageBucket: "ts-productivity-tracker.firebasestorage.app",
+  messagingSenderId: "589934080438",
+  appId: "1:589934080438:web:7926d8178698b29360d117"
 };
 
-// We would normally inject config or fetch it here.
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
