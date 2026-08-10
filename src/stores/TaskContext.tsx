@@ -62,8 +62,9 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     setTasks((prev) => [tempTask, ...prev]);
 
     try {
-      // Add to IndexedDB
-      await addTaskToDB(tempTask);
+      // Add to IndexedDB (convert dates/timestamps to plain serializable values for Dexie)
+      const serializableTask = JSON.parse(JSON.stringify(tempTask));
+      await addTaskToDB(serializableTask);
 
       // Add to Firestore
       const firestoreId = await createTask({ ...taskData, ownerId: user.uid });
@@ -74,9 +75,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       );
 
       // Update IndexedDB with Firestore ID
+      const updatedSerializable = JSON.parse(JSON.stringify({ ...tempTask, id: firestoreId }));
       await updateTaskInDB(tempId, { id: firestoreId });
       await deleteTaskFromDB(tempId);
-      await addTaskToDB({ ...tempTask, id: firestoreId });
+      await addTaskToDB(updatedSerializable);
     } catch (error) {
       console.error('Failed to add task:', error);
       // Revert on error
