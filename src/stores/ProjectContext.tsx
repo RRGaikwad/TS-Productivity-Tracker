@@ -29,15 +29,17 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
 
     setLoading(true);
 
-    // Load from IndexedDB first
+    // Load from IndexedDB first — show data immediately
     getProjectsFromDB(user.uid).then((localProjects) => {
       setProjects(localProjects);
+      setLoading(false); // unblock UI right away
+    }).catch(() => {
+      setLoading(false);
     });
 
-    // Subscribe to Firestore
+    // Subscribe to Firestore — syncs silently in the background
     const unsubscribe = subscribeToProjects(user.uid, (firestoreProjects) => {
       setProjects(firestoreProjects);
-      setLoading(false);
     });
 
     return () => unsubscribe();

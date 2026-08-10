@@ -6,7 +6,7 @@ import { TaskCard } from './TaskCard';
 import { QuickAddBar } from './QuickAddBar';
 import { KanbanView } from '../views/KanbanView';
 import { CalendarView } from '../views/CalendarView';
-import { EmptyState } from '../../../components/common';
+import { EmptyState, SkeletonList } from '../../../components/common';
 import { PRIORITIES, STATUSES } from '../../../lib/constants';
 import type { TaskPriority, TaskStatus } from '../../../types';
 
@@ -81,8 +81,14 @@ export const TaskList = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className="space-y-6">
+        <div className="h-12 bg-gray-200 rounded-xl animate-pulse" />
+        <div className="flex items-center justify-between">
+          <div className="h-8 w-32 bg-gray-200 rounded-lg animate-pulse" />
+          <div className="h-9 w-24 bg-gray-200 rounded-lg animate-pulse" />
+        </div>
+        <div className="h-28 bg-gray-100 rounded-xl animate-pulse" />
+        <SkeletonList count={5} />
       </div>
     );
   }

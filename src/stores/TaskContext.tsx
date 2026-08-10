@@ -29,15 +29,17 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
     setLoading(true);
 
-    // Load from IndexedDB first
+    // Load from IndexedDB first — show data immediately
     getTasksFromDB(user.uid).then((localTasks) => {
       setTasks(localTasks);
+      setLoading(false); // unblock UI right away
+    }).catch(() => {
+      setLoading(false); // still unblock even if IndexedDB fails
     });
 
-    // Subscribe to Firestore
+    // Subscribe to Firestore — syncs silently in the background
     const unsubscribe = subscribeToTasks(user.uid, (firestoreTasks) => {
       setTasks(firestoreTasks);
-      setLoading(false);
     });
 
     return () => unsubscribe();
