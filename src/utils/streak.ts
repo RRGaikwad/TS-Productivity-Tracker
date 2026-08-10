@@ -20,8 +20,13 @@ export const calculateStreak = (tasks: Task[], currentStreakObj?: Streak): Strea
   const completedDates = completedTasks
     .map((t) => {
       if (!t.updatedAt) return null;
-      if (typeof t.updatedAt === 'object' && 'seconds' in t.updatedAt) {
-        return new Date(t.updatedAt.seconds * 1000);
+      if (t.updatedAt instanceof Date) return t.updatedAt;
+      if (typeof t.updatedAt === 'object' && typeof (t.updatedAt as any).seconds === 'number') {
+        return new Date((t.updatedAt as any).seconds * 1000);
+      }
+      if (typeof t.updatedAt === 'string' || typeof t.updatedAt === 'number') {
+        const d = new Date(t.updatedAt);
+        return isNaN(d.getTime()) ? null : d;
       }
       return null;
     })

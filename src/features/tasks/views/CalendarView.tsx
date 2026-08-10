@@ -37,7 +37,15 @@ export const CalendarView = () => {
         {weekDays.map((day) => {
           const dayTasks = tasks.filter((t) => {
             if (!t.dueDate) return false;
-            const dueDateObj = new Date(t.dueDate.seconds * 1000);
+            let dueDateObj: Date | null = null;
+            if (t.dueDate instanceof Date) {
+              dueDateObj = t.dueDate;
+            } else if (typeof t.dueDate === 'object' && typeof (t.dueDate as any).seconds === 'number') {
+              dueDateObj = new Date((t.dueDate as any).seconds * 1000);
+            } else if (typeof t.dueDate === 'string' || typeof t.dueDate === 'number') {
+              dueDateObj = new Date(t.dueDate);
+            }
+            if (!dueDateObj || isNaN(dueDateObj.getTime())) return false;
             return isSameDay(dueDateObj, day);
           });
 

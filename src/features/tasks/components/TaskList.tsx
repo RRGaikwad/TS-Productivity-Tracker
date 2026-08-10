@@ -49,21 +49,32 @@ export const TaskList = () => {
       );
     }
 
+    // Helper to extract timestamp ms safely
+    const getTimestamp = (val: any) => {
+      if (!val) return 0;
+      if (val instanceof Date) return val.getTime();
+      if (typeof val === 'object' && typeof val.seconds === 'number') return val.seconds * 1000;
+      if (typeof val === 'string' || typeof val === 'number') return new Date(val).getTime() || 0;
+      return 0;
+    };
+
     // Sort
     filtered = [...filtered].sort((a, b) => {
       if (sortBy === 'dueDate') {
-        if (!a.dueDate && !b.dueDate) return 0;
-        if (!a.dueDate) return 1;
-        if (!b.dueDate) return -1;
-        return a.dueDate.seconds - b.dueDate.seconds;
+        const aDue = getTimestamp(a.dueDate);
+        const bDue = getTimestamp(b.dueDate);
+        if (!aDue && !bDue) return 0;
+        if (!aDue) return 1;
+        if (!bDue) return -1;
+        return aDue - bDue;
       }
       if (sortBy === 'priority') {
         const priorityOrder = { high: 0, medium: 1, low: 2 };
         return priorityOrder[a.priority] - priorityOrder[b.priority];
       }
       // createdAt
-      const aTime = a.createdAt && 'seconds' in a.createdAt ? a.createdAt.seconds : 0;
-      const bTime = b.createdAt && 'seconds' in b.createdAt ? b.createdAt.seconds : 0;
+      const aTime = getTimestamp(a.createdAt);
+      const bTime = getTimestamp(b.createdAt);
       return bTime - aTime;
     });
 

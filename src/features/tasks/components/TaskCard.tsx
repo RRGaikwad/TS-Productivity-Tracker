@@ -12,6 +12,19 @@ interface TaskCardProps {
   task: Task;
 }
 
+function safeToDate(val: any): Date | null {
+  if (!val) return null;
+  if (val instanceof Date) return val;
+  if (typeof val === 'object' && typeof val.seconds === 'number') {
+    return new Date(val.seconds * 1000);
+  }
+  if (typeof val === 'string' || typeof val === 'number') {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+
 export const TaskCard = ({ task }: TaskCardProps) => {
   const { editTask, removeTask } = useTasks();
   const { projects } = useProjects();
@@ -21,7 +34,8 @@ export const TaskCard = ({ task }: TaskCardProps) => {
   const [showLogTime, setShowLogTime] = useState(false);
 
   const project = projects.find((p) => p.id === task.projectId);
-  const isTaskOverdue = task.dueDate && isOverdue(new Date(task.dueDate.seconds * 1000));
+  const dueDateObj = safeToDate(task.dueDate);
+  const isTaskOverdue = dueDateObj ? isOverdue(dueDateObj) : false;
 
   const handleStatusChange = async (newStatus: string) => {
     await editTask(task.id, { status: newStatus as any });
@@ -92,10 +106,10 @@ export const TaskCard = ({ task }: TaskCardProps) => {
             <option value="done">Done</option>
           </select>
 
-          {task.dueDate && (
+          {dueDateObj && (
             <span className={`text-xs ${isTaskOverdue ? 'text-red-600' : 'text-gray-500'}`}>
               <span className="hidden sm:inline">Due: </span>
-              {formatDate(new Date(task.dueDate.seconds * 1000))}
+              {formatDate(dueDateObj)}
             </span>
           )}
         </div>
