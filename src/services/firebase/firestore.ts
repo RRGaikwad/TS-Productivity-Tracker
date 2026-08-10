@@ -110,11 +110,18 @@ export const getTasks = async (userId: string, filters?: {
 };
 
 export const createTask = async (data: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
-  const docRef = await addDoc(collection(firestore, 'tasks'), {
-    ...data,
+  const payload: any = {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
+  };
+
+  Object.entries(data).forEach(([key, val]) => {
+    if (val !== undefined) {
+      payload[key] = val;
+    }
   });
+
+  const docRef = await addDoc(collection(firestore, 'tasks'), payload);
   return docRef.id;
 };
 

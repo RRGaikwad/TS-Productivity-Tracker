@@ -49,41 +49,54 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     if (!user) return;
 
     const tempId = `temp-${Date.now()}`;
+
+    // Clean undefined fields so JSON / Firestore / Dexie serialization never fails
+    const cleanData: any = {};
+    Object.entries(taskData).forEach(([key, val]) => {
+      if (val !== undefined) cleanData[key] = val;
+    });
+
     const tempTask: any = {
-      ...taskData,
+      ...cleanData,
       ownerId: user.uid,
       id: tempId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       order: Date.now(),
     };
 
-    // Optimistic update
+    // Immediate Optimistic Update
     setTasks((prev) => [tempTask, ...prev]);
 
     try {
-      // Add to IndexedDB (convert dates/timestamps to plain serializable values for Dexie)
-      const serializableTask = JSON.parse(JSON.stringify(tempTask));
-      await addTaskToDB(serializableTask);
+      // 1. Save to local IndexedDB
+      await addTaskToDB(tempTask);
+    } catch (err) {
+      console.warn('IndexedDB write warning:', err);
+    }
 
-      // Add to Firestore
-      const firestoreId = await createTask({ ...taskData, ownerId: user.uid });
+    try {
+      // 2. Save to Firestore remote database
+      const firestoreId = await createTask({
+        ...cleanData,
+        ownerId: user.uid,
+      });
 
-      // Update local state with Firestore ID
+      // 3. Update local state with official Firestore ID
       setTasks((prev) =>
         prev.map((t: any) => (t.id === tempId ? { ...t, id: firestoreId } : t))
       );
 
-      // Update IndexedDB with Firestore ID
-      const updatedSerializable = JSON.parse(JSON.stringify({ ...tempTask, id: firestoreId }));
-      await updateTaskInDB(tempId, { id: firestoreId });
-      await deleteTaskFromDB(tempId);
-      await addTaskToDB(updatedSerializable);
+      // 4. Update local IndexedDB with official Firestore ID
+      try {
+        await deleteTaskFromDB(tempId);
+        await addTaskToDB({ ...tempTask, id: firestoreId });
+      } catch (dbErr) {
+        console.warn('IndexedDB ID update warning:', dbErr);
+      }
     } catch (error) {
-      console.error('Failed to add task:', error);
-      // Revert on error
-      setTasks((prev) => prev.filter((t: any) => t.id !== tempId));
-      await deleteTaskFromDB(tempId);
+      console.error('Firestore create task failed (saved locally):', error);
+      // Keep optimistic local task if network is offline or Firestore fails
     }
   };
 
