@@ -23,9 +23,9 @@ export class TaskProductivityDB extends Dexie {
   constructor() {
     super('TaskProductivityDB');
     this.version(1).stores({
-      tasks: 'id, ownerId, projectId, status, dueDate, parentTaskId, [ownerId+projectId], [ownerId+status], [ownerId+dueDate]',
+      tasks: 'id, ownerId, projectId, goalId, status, dueDate, parentTaskId, [ownerId+status], [ownerId+dueDate]',
       projects: 'id, ownerId, [ownerId+archived]',
-      timeEntries: 'id, ownerId, taskId, projectId, startTime, [ownerId+taskId], [ownerId+startTime], [ownerId+projectId+startTime]',
+      timeEntries: 'id, ownerId, taskId, projectId, startTime, [ownerId+taskId], [ownerId+startTime]',
       pomodoroSessions: 'id, ownerId, startTime, [ownerId+startTime]',
       goals: 'id, ownerId, [ownerId+archived]',
       dailyReviews: 'id, ownerId, date, [ownerId+date]',

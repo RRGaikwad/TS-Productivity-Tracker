@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../stores/AuthContext';
 import { TimerDisplay } from '../../features/timeTracking/components/TimerDisplay';
 
-type Tab = 'tasks' | 'projects' | 'pomodoro' | 'analytics' | 'goals' | 'settings';
+type Tab = 'tasks' | 'pomodoro' | 'analytics' | 'goals' | 'settings';
 
 interface HeaderProps {
   activeTab: Tab;
@@ -11,10 +11,9 @@ interface HeaderProps {
 
 const NAV_ITEMS: { id: Tab; label: string; icon: string }[] = [
   { id: 'tasks',     label: 'Tasks',     icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
-  { id: 'projects',  label: 'Projects',  icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z' },
+  { id: 'goals',     label: 'Goals',     icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
   { id: 'pomodoro',  label: 'Pomodoro',  icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-  { id: 'analytics', label: 'Analytics', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-  { id: 'goals',     label: 'Goals',     icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
+  { id: 'analytics', label: 'Analytics', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
   { id: 'settings',  label: 'Settings',  icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
 ];
 
@@ -66,14 +65,14 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   return (
     <>
       {/* ── Top bar ── */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+      <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-40 shadow-sm transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 gap-4">
 
             {/* Mobile hamburger */}
             <button
               id="mobile-menu-btn"
-              className="lg:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
               onClick={() => setDrawerOpen(true)}
               aria-label="Open menu"
             >
@@ -89,7 +88,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <span className="text-lg font-bold text-gray-900 hidden sm:block">TechSuccession</span>
+              <span className="text-lg font-bold text-gray-900 dark:text-white hidden sm:block">TechSuccession</span>
             </div>
 
             {/* Desktop nav tabs — centre */}
@@ -100,8 +99,8 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                   onClick={() => onTabChange(item.id)}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
                     activeTab === item.id
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                      ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800'
                   }`}
                 >
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +122,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                 <button
                   id="user-avatar-btn"
                   onClick={() => setDropdownOpen((o) => !o)}
-                  className="flex items-center gap-2 p-1 rounded-xl hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-2 p-1 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
                   aria-label="User menu"
                 >
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
@@ -136,16 +135,16 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
 
                 {/* Dropdown */}
                 {dropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50 animate-in">
+                  <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-100 dark:border-slate-800 overflow-hidden z-50 animate-in">
                     {/* User info */}
-                    <div className="px-4 py-3 border-b border-gray-100 bg-gradient-to-br from-blue-50 to-indigo-50">
+                    <div className="px-4 py-3 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
                           {initials}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-gray-900 truncate">{displayName}</p>
-                          <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{displayName}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
                         </div>
                       </div>
                     </div>
@@ -153,7 +152,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                     <div className="p-2">
                       <button
                         onClick={() => { onTabChange('settings'); setDropdownOpen(false); }}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                       >
                         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -187,16 +186,16 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
             onClick={() => setDrawerOpen(false)}
           />
           {/* Drawer panel */}
-          <div className="absolute left-0 top-0 h-full w-72 bg-white shadow-2xl flex flex-col slide-in-left">
+          <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-slate-900 shadow-2xl flex flex-col slide-in-left">
             {/* Drawer header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-br from-blue-50 to-indigo-50">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                 </div>
-                <span className="font-bold text-gray-900">TechSuccession</span>
+                <span className="font-bold text-gray-900 dark:text-white">TechSuccession</span>
               </div>
               <button
                 onClick={() => setDrawerOpen(false)}
@@ -209,14 +208,14 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
             </div>
 
             {/* User info in drawer */}
-            <div className="px-5 py-4 border-b border-gray-100">
+            <div className="px-5 py-4 border-b border-gray-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold">
                   {initials}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-gray-900 truncate">{displayName}</p>
-                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{displayName}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
                 </div>
               </div>
             </div>
@@ -229,8 +228,8 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                   onClick={() => handleNavClick(item.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 ${
                     activeTab === item.id
-                      ? 'bg-blue-50 text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,7 +244,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
             </nav>
 
             {/* Sign out at bottom */}
-            <div className="px-3 py-4 border-t border-gray-100">
+            <div className="px-3 py-4 border-t border-gray-100 dark:border-slate-800">
               <button
                 onClick={() => { signOut(); setDrawerOpen(false); }}
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium"

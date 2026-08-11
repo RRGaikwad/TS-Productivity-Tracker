@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../../lib/db';
 import { useAuth } from '../../../stores/AuthContext';
-import { useProjects } from '../../../stores/ProjectContext';
 import type { Task, TimeEntry, PomodoroSession } from '../../../types';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 
@@ -9,7 +8,6 @@ export type DateRangeDays = 7 | 14 | 30;
 
 export const useAnalytics = (days: DateRangeDays = 7) => {
   const { user } = useAuth();
-  const { projects } = useProjects();
 
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -66,17 +64,6 @@ export const useAnalytics = (days: DateRangeDays = 7) => {
     return { date: dayStr, count };
   });
 
-  // Time Spent by Project
-  const timeByProject = projects.map((p) => {
-    const pEntries = timeEntries.filter((e) => e.projectId === p.id);
-    const seconds = pEntries.reduce((acc: number, e: TimeEntry) => acc + (e.durationSeconds || 0), 0);
-    return {
-      projectName: p.name,
-      color: p.color || '#3B82F6',
-      hours: Number((seconds / 3600).toFixed(1)),
-    };
-  }).filter((p) => p.hours > 0);
-
   // Time Spent by Day
   const timeByDay = Array.from({ length: days }).map((_, idx) => {
     const d = subDays(new Date(), days - 1 - idx);
@@ -103,7 +90,6 @@ export const useAnalytics = (days: DateRangeDays = 7) => {
       completionRatePercentage: completionRate,
     },
     tasksCompletedTrend,
-    timeByProject,
     timeByDay,
   };
 };

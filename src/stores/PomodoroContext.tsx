@@ -98,7 +98,6 @@ export const PomodoroProvider = ({ children }: { children: ReactNode }) => {
             id: `time_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             ownerId: user.uid,
             taskId: selectedTaskId,
-            projectId: task.projectId,
             startTime: session.startTime,
             endTime: now,
             durationSeconds: duration,

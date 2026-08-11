@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTasks } from '../../../stores/TaskContext';
-import { useProjects } from '../../../stores/ProjectContext';
+import { useGoals } from '../../../stores/GoalContext';
 import { TaskPriorityBadge } from './TaskPriorityBadge';
 import { TimerButton } from '../../timeTracking/components/TimerButton';
 import { ManualTimeEntry } from '../../timeTracking/components/ManualTimeEntry';
@@ -27,13 +27,12 @@ function safeToDate(val: any): Date | null {
 
 export const TaskCard = ({ task }: TaskCardProps) => {
   const { editTask, removeTask } = useTasks();
-  const { projects } = useProjects();
+  const { goals } = useGoals();
   const { totalSeconds, formattedTotal } = useTaskTime(task.id);
-  const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showLogTime, setShowLogTime] = useState(false);
 
-  const project = projects.find((p) => p.id === task.projectId);
+  const goal = goals.find((g) => g.id === task.goalId);
   const dueDateObj = safeToDate(task.dueDate);
   const isTaskOverdue = dueDateObj ? isOverdue(dueDateObj) : false;
 
@@ -46,41 +45,22 @@ export const TaskCard = ({ task }: TaskCardProps) => {
     setShowDeleteConfirm(false);
   };
 
-  if (isEditing) {
-    return (
-      <div className="bg-white rounded-lg shadow p-4 border-2 border-blue-500">
-        <div className="text-sm text-gray-600 mb-2">Edit task (simplified)</div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsEditing(false)}
-            className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 p-4 shadow-sm hover:shadow-md transition-all">
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
-          <h3 className={`font-medium ${task.status === 'done' ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+          <h3 className={`font-semibold text-sm ${task.status === 'done' ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-900 dark:text-white'}`}>
             {task.title}
           </h3>
-          <div className="flex items-center gap-3 mt-1">
-            {project && (
-              <div className="flex items-center gap-1">
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: project.color }}
-                />
-                <span className="text-xs text-gray-500">{project.name}</span>
+          <div className="flex items-center gap-2 mt-1">
+            {goal && (
+              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800/50 text-[11px] font-medium text-indigo-700 dark:text-indigo-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" style={{ backgroundColor: goal.color }} />
+                <span>🎯 {goal.title}</span>
               </div>
             )}
             {totalSeconds > 0 && (
-              <span className="text-xs font-mono text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+              <span className="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded-md">
                 ⏱ {formattedTotal}
               </span>
             )}
@@ -90,16 +70,16 @@ export const TaskCard = ({ task }: TaskCardProps) => {
       </div>
 
       {task.description && (
-        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{task.description}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">{task.description}</p>
       )}
 
-      <div className="flex items-center justify-between mt-3">
+      <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-50 dark:border-slate-800/60">
         <div className="flex items-center gap-2">
           <TimerButton task={task} />
           <select
             value={task.status}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="text-xs px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="text-xs px-2 py-1 border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-800 dark:text-gray-200 rounded-lg focus:outline-none"
           >
             <option value="todo">Todo</option>
             <option value="in_progress">In Progress</option>
@@ -107,7 +87,7 @@ export const TaskCard = ({ task }: TaskCardProps) => {
           </select>
 
           {dueDateObj && (
-            <span className={`text-xs ${isTaskOverdue ? 'text-red-600' : 'text-gray-500'}`}>
+            <span className={`text-xs font-medium ${isTaskOverdue ? 'text-red-500 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'}`}>
               <span className="hidden sm:inline">Due: </span>
               {formatDate(dueDateObj)}
             </span>
@@ -117,28 +97,17 @@ export const TaskCard = ({ task }: TaskCardProps) => {
         <div className="flex gap-1 items-center">
           <button
             onClick={() => setShowLogTime(!showLogTime)}
-            className="text-gray-400 hover:text-blue-600 p-1 text-xs flex items-center gap-0.5"
-            title="Log manual time"
+            className="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 p-1 text-xs"
+            title="Log time"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setIsEditing(true)}
-            className="text-gray-400 hover:text-gray-600 p-1"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
+            ⏱
           </button>
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="text-gray-400 hover:text-red-600 p-1"
+            className="text-gray-400 hover:text-red-600 dark:hover:text-red-400 p-1 text-xs"
+            title="Delete task"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
+            🗑
           </button>
         </div>
       </div>
@@ -148,18 +117,18 @@ export const TaskCard = ({ task }: TaskCardProps) => {
       )}
 
       {showDeleteConfirm && (
-        <div className="mt-3 pt-3 border-t">
-          <p className="text-sm text-gray-600 mb-2">Delete this task?</p>
+        <div className="mt-3 pt-3 border-t border-gray-100 dark:border-slate-800">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Delete this task?</p>
           <div className="flex gap-2">
             <button
               onClick={handleDelete}
-              className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              className="text-xs bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 font-semibold"
             >
               Delete
             </button>
             <button
               onClick={() => setShowDeleteConfirm(false)}
-              className="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
+              className="text-xs bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-lg hover:bg-gray-200"
             >
               Cancel
             </button>

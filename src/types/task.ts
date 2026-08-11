@@ -7,7 +7,7 @@ export type RecurrenceRule = 'daily' | 'weekly' | 'monthly';
 export interface Task {
   id: string;
   ownerId: string;
-  projectId: string;
+  goalId?: string;
   title: string;
   description?: string;
   dueDate?: Timestamp;
@@ -24,7 +24,7 @@ export interface Task {
 }
 
 export interface TaskFilters {
-  projectId?: string;
+  goalId?: string;
   status?: TaskStatus;
   priority?: TaskPriority;
   searchQuery?: string;

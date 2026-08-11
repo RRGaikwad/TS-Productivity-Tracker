@@ -30,7 +30,6 @@ export const ManualTimeEntry = ({ task, onClose }: ManualTimeEntryProps) => {
         id: `time_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         ownerId: user.uid,
         taskId: task.id,
-        projectId: task.projectId,
         startTime,
         endTime: now,
         durationSeconds,

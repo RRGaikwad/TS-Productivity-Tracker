@@ -10,9 +10,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  PieChart,
-  Pie,
-  Cell,
   LineChart,
   Line,
   CartesianGrid,
@@ -22,7 +19,7 @@ export const AnalyticsDashboard = () => {
   const [days, setDays] = useState<DateRangeDays>(7);
   const { isPro } = usePro();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const { loading, summary, tasksCompletedTrend, timeByProject, timeByDay } = useAnalytics(days);
+  const { loading, summary, tasksCompletedTrend, timeByDay } = useAnalytics(days);
 
   if (loading) {
     return (
@@ -35,13 +32,13 @@ export const AnalyticsDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Analytics & Insights</h2>
-          <p className="text-xs text-gray-500 mt-1">Track your productivity, task velocity, and focus hours.</p>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Analytics & Insights</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Track your productivity, task velocity, and focus hours.</p>
         </div>
 
-        <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl">
+        <div className="flex items-center gap-1 bg-gray-100 dark:bg-slate-800 p-1 rounded-xl">
           {([7, 14, 30] as DateRangeDays[]).map((d) => (
             <button
               key={d}
@@ -53,7 +50,7 @@ export const AnalyticsDashboard = () => {
                 }
               }}
               className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                days === d ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                days === d ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               {d} Days
@@ -64,25 +61,25 @@ export const AnalyticsDashboard = () => {
 
       {/* Summary KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Completed Tasks</p>
-          <p className="text-3xl font-extrabold text-gray-900 mt-2">{summary.tasksCompleted}</p>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Completed Tasks</p>
+          <p className="text-3xl font-extrabold text-gray-900 dark:text-white mt-2">{summary.tasksCompleted}</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Time Tracked</p>
-          <p className="text-3xl font-extrabold text-indigo-600 mt-2 font-mono">
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time Tracked</p>
+          <p className="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 mt-2 font-mono">
             {formatDuration(summary.totalTimeSpentSeconds)}
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Focus Sessions</p>
-          <p className="text-3xl font-extrabold text-emerald-600 mt-2">{summary.pomodoroSessionsCount}</p>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Focus Sessions</p>
+          <p className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-2">{summary.pomodoroSessionsCount}</p>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Completion Rate</p>
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Completion Rate</p>
           <p className="text-3xl font-extrabold text-amber-500 mt-2">{summary.completionRatePercentage}%</p>
         </div>
       </div>
@@ -90,12 +87,12 @@ export const AnalyticsDashboard = () => {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Tasks Completed Trend */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4">Task Completion Velocity</h3>
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-800 dark:text-white mb-4">Task Completion Velocity</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={tasksCompletedTrend}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" className="dark:stroke-slate-800" />
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#6B7280' }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#6B7280' }} />
                 <Tooltip
@@ -108,12 +105,12 @@ export const AnalyticsDashboard = () => {
         </div>
 
         {/* Time Spent by Day */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4">Daily Focus Hours</h3>
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-800 dark:text-white mb-4">Daily Focus Hours</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={timeByDay}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" className="dark:stroke-slate-800" />
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#6B7280' }} />
                 <YAxis tick={{ fontSize: 11, fill: '#6B7280' }} />
                 <Tooltip
@@ -123,35 +120,6 @@ export const AnalyticsDashboard = () => {
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </div>
-
-        {/* Time by Project */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2">
-          <h3 className="text-sm font-semibold text-gray-800 mb-4">Time Spent by Project</h3>
-          {timeByProject.length > 0 ? (
-            <div className="h-64 flex items-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={timeByProject}
-                    dataKey="hours"
-                    nameKey="projectName"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    label={({ projectName, hours }) => `${projectName}: ${hours}h`}
-                  >
-                    {timeByProject.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="py-12 text-center text-xs text-gray-400">No time logged for projects in this window.</div>
-          )}
         </div>
       </div>
 

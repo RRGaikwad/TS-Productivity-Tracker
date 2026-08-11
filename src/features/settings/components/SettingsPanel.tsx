@@ -62,8 +62,8 @@ export const SettingsPanel = () => {
     <div className="max-w-5xl mx-auto">
       {/* Page header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-sm text-gray-500 mt-1">Manage your preferences and account details</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage your preferences and account details</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
@@ -77,8 +77,8 @@ export const SettingsPanel = () => {
                 onClick={() => setActiveSection(item.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
                   activeSection === item.id
-                    ? 'bg-blue-50 text-blue-600 shadow-sm'
-                    : 'bg-white text-gray-500 hover:bg-gray-50 border border-gray-100'
+                    ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shadow-sm'
+                    : 'bg-white dark:bg-slate-900 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 border border-gray-100 dark:border-slate-800'
                 }`}
               >
                 <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,21 +90,21 @@ export const SettingsPanel = () => {
           </div>
 
           {/* Desktop: vertical sidebar */}
-          <nav className="hidden md:flex flex-col gap-1 bg-white rounded-2xl border border-gray-100 shadow-sm p-2">
+          <nav className="hidden md:flex flex-col gap-1 bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-2">
             {SIDEBAR_ITEMS.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveSection(item.id)}
                 className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-left transition-all duration-150 group ${
                   activeSection === item.id
-                    ? 'bg-blue-50 text-blue-700 shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                   activeSection === item.id
-                    ? 'bg-blue-100'
-                    : 'bg-gray-100 group-hover:bg-gray-200'
+                    ? 'bg-blue-100 dark:bg-blue-900/50'
+                    : 'bg-gray-100 dark:bg-slate-800 group-hover:bg-gray-200 dark:group-hover:bg-slate-700'
                 }`}>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
@@ -126,11 +126,11 @@ export const SettingsPanel = () => {
 
         {/* ── Content panel ── */}
         <div className="flex-1 min-w-0">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden">
             {/* Section header */}
-            <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-              <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-              <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>
+            <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800/50 dark:to-slate-900">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</p>
             </div>
             {/* Section body */}
             <div className="p-6">

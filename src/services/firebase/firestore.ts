@@ -16,7 +16,8 @@ import {
   type Unsubscribe,
 } from 'firebase/firestore';
 import { firestore } from '../../lib/firebase';
-import type { User, Project, Task } from '../../types';
+import type { User, Task, Goal } from '../../types';
+
 
 // Users
 export const getUserDoc = async (userId: string): Promise<DocumentData | null> => {
@@ -33,51 +34,53 @@ export const updateUserDoc = async (userId: string, data: Partial<User>): Promis
   });
 };
 
-// Projects
-export const getProjects = async (userId: string): Promise<Project[]> => {
+// Goals
+export const getGoals = async (userId: string): Promise<Goal[]> => {
   const q = query(
-    collection(firestore, 'projects'),
+    collection(firestore, 'goals'),
     where('ownerId', '==', userId),
     where('archived', '==', false),
     orderBy('createdAt', 'desc')
   );
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Project));
+  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Goal));
 };
 
-export const createProject = async (data: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
-  const docRef = await addDoc(collection(firestore, 'projects'), {
-    ...data,
+export const createGoal = async (data: Omit<Goal, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  const payload: any = {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
+  };
+  Object.entries(data).forEach(([key, val]) => {
+    if (val !== undefined) payload[key] = val;
   });
+  const docRef = await addDoc(collection(firestore, 'goals'), payload);
   return docRef.id;
 };
 
-export const updateProject = async (projectId: string, data: Partial<Project>): Promise<void> => {
-  const docRef = doc(firestore, 'projects', projectId);
+export const updateGoal = async (goalId: string, data: Partial<Goal>): Promise<void> => {
+  const docRef = doc(firestore, 'goals', goalId);
   await updateDoc(docRef, {
     ...data,
     updatedAt: serverTimestamp(),
   });
 };
 
-export const deleteProject = async (projectId: string): Promise<void> => {
-  const docRef = doc(firestore, 'projects', projectId);
+export const deleteGoal = async (goalId: string): Promise<void> => {
+  const docRef = doc(firestore, 'goals', goalId);
   await deleteDoc(docRef);
 };
 
-export const subscribeToProjects = (userId: string, callback: (projects: Project[]) => void): Unsubscribe => {
+export const subscribeToGoals = (userId: string, callback: (goals: Goal[]) => void): Unsubscribe => {
   const q = query(
-    collection(firestore, 'projects'),
+    collection(firestore, 'goals'),
     where('ownerId', '==', userId),
-    where('archived', '==', false),
-    orderBy('createdAt', 'desc')
+    where('archived', '==', false)
   );
-  
+
   return onSnapshot(q, (snapshot) => {
-    const projects = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Project));
-    callback(projects);
+    const goals = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Goal));
+    callback(goals);
   });
 };
 

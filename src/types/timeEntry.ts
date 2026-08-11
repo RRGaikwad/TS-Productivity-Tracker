@@ -6,7 +6,6 @@ export interface TimeEntry {
   id: string;
   ownerId: string;
   taskId: string;
-  projectId: string;
   startTime: Timestamp;
   endTime?: Timestamp;
   durationSeconds: number;
